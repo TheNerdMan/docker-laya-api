@@ -9,6 +9,24 @@ const latency = document.querySelector("#latency");
 const jsonResults = document.querySelector("#json-results");
 const visualTab = document.querySelector("#visual-tab");
 const jsonTab = document.querySelector("#json-tab");
+const themeButtons = [...document.querySelectorAll("[data-theme-choice]")];
+const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+let savedTheme = "system";
+try {
+  const storedTheme = localStorage.getItem("laya-theme");
+  if (["system", "light", "dark"].includes(storedTheme)) savedTheme = storedTheme;
+} catch {}
+
+function applyTheme(mode) {
+  const resolved = mode === "system" ? (systemTheme.matches ? "dark" : "light") : mode;
+  document.documentElement.dataset.theme = resolved;
+  themeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.themeChoice === mode)));
+  try { localStorage.setItem("laya-theme", mode); } catch {}
+}
+
+applyTheme(savedTheme);
+themeButtons.forEach((button) => button.addEventListener("click", () => applyTheme(button.dataset.themeChoice)));
+systemTheme.addEventListener("change", () => { if (themeButtons.find((button) => button.getAttribute("aria-pressed") === "true")?.dataset.themeChoice === "system") applyTheme("system"); });
 let questionNumber = 0;
 
 const initialQuestions = [

@@ -10,6 +10,9 @@
   --coral: #d9694c;
   --coral-dark: #a94431;
   --shadow: 0 18px 45px rgba(24, 33, 31, 0.08);
+  --topbar: rgba(255, 255, 255, 0.72);
+  --control: #fbfcfa;
+  --track: #e8ede9;
   --radius: 14px;
   font-family:
     Inter,
@@ -19,6 +22,40 @@
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #edf5ff;
+  --muted: #a6b8cc;
+  --line: #304864;
+  --paper: #0d1622;
+  --surface: #142235;
+  --mint: #1b3858;
+  --mint-deep: #83bdff;
+  --coral: #f08a6c;
+  --coral-dark: #ff9e81;
+  --topbar: rgba(13, 22, 34, 0.9);
+  --control: #101d2d;
+  --track: #2b435e;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ink: #edf5ff;
+    --muted: #a6b8cc;
+    --line: #304864;
+    --paper: #0d1622;
+    --surface: #142235;
+    --mint: #1b3858;
+    --mint-deep: #83bdff;
+    --coral: #f08a6c;
+    --coral-dark: #ff9e81;
+    --topbar: rgba(13, 22, 34, 0.9);
+    --control: #101d2d;
+    --track: #2b435e;
+    --shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+  }
 }
 * {
   box-sizing: border-box;
@@ -58,7 +95,50 @@ a:focus-visible {
   justify-content: space-between;
   padding: 0 clamp(20px, 5vw, 72px);
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--topbar);
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.theme-control {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+}
+.theme-options {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.theme-button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 28px;
+  border: 0;
+  border-radius: 5px;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.theme-button:hover { color: var(--ink); }
+.theme-button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.theme-button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 .wordmark {
   display: inline-flex;
@@ -177,7 +257,7 @@ select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fbfcfa;
+  background: var(--control);
   color: var(--ink);
   transition:
     border-color 0.18s ease,
@@ -496,7 +576,7 @@ select:focus {
   height: 7px;
   overflow: hidden;
   border-radius: 99px;
-  background: #e8ede9;
+  background: var(--track);
 }
 .bar span,
 .noul-meter span {
