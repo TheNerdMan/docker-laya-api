@@ -135,8 +135,9 @@ questionsList.addEventListener("change", (event) => {
 form.addEventListener("submit", async (event) => {
   event.preventDefault(); clearError();
   const state = stateInput.value.trim();
-  const questions = currentQuestions();
-  if (!state || !questions.length || questions.some((question) => !question.instructions || (question.type !== "noul" && !question.criteria.length))) { showError("Add a state, instructions, and at least one option or level for every question."); return; }
+  const questionList = currentQuestions();
+  const questions = Object.fromEntries(questionList.map((question) => [question.id, question]));
+  if (!state || !questionList.length || questionList.some((question) => !question.instructions || (question.type !== "noul" && (Array.isArray(question.criteria) ? !question.criteria.length : !Object.keys(question.criteria).length)))) { showError("Add a state, instructions, and at least one option or level for every question."); return; }
   setButtonLoading(true);
   const started = performance.now();
   try {
