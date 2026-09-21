@@ -115,6 +115,7 @@ visualTab.addEventListener("click", () => setReadoutTab("visual"));
 jsonTab.addEventListener("click", () => setReadoutTab("json"));
 
 
+
 async function checkService(path, dotId, labelId) {
   try {
     const response = await fetch(path, { cache: "no-store" });
