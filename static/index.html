@@ -1,71 +1,124 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A small interactive surface for Laya typed decisions.">
-  <title>Laya / decision lab</title>
-  <link rel="stylesheet" href="/static/styles.css">
-  <script type="module" src="/static/app.js"></script>
-</head>
-<body>
-  <header class="topbar">
-    <a class="wordmark" href="/" aria-label="Laya decision lab home"><span class="mark">L</span><span>Laya</span></a>
-    <div class="status-strip" aria-label="Service status">
-      <span class="status-item"><span class="status-dot" id="health-dot"></span><span>API <strong id="health-label">checking</strong></span></span>
-      <span class="status-item"><span class="status-dot" id="ready-dot"></span><span>Model <strong id="ready-label">loading</strong></span></span>
-    </div>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A small interactive surface for Laya typed decisions."
+    />
+    <title>Laya / decision lab</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script type="module" src="/static/app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="/" aria-label="Laya decision lab home"
+        ><span class="mark">L</span><span>Laya</span></a
+      >
+      <div class="status-strip" aria-label="Service status">
+        <span class="status-item"
+          ><span class="status-dot" id="health-dot"></span
+          ><span>API <strong id="health-label">checking</strong></span></span
+        >
+        <span class="status-item"
+          ><span class="status-dot" id="ready-dot"></span
+          ><span>Model <strong id="ready-label">loading</strong></span></span
+        >
+      </div>
+    </header>
 
-  <main class="shell">
-    <section class="intro" aria-labelledby="page-title">
-      <p class="section-label">Decision lab</p>
-      <h1 id="page-title">Turn a state into a calibrated decision.</h1>
-      <p class="lede">Laya reads one state and answers typed questions in a single forward pass. Shape the questions below, then inspect the distribution—not just the winner.</p>
-    </section>
-
-    <form id="predict-form" class="workspace">
-      <section class="input-panel panel" aria-labelledby="state-heading">
-        <div class="panel-heading">
-          <div>
-            <p class="section-label">01 / State</p>
-            <h2 id="state-heading">What should Laya read?</h2>
-          </div>
-          <span class="field-note">Text or JSON</span>
-        </div>
-        <label class="sr-only" for="state-input">State</label>
-        <textarea id="state-input" name="state" rows="11" spellcheck="true">A customer was charged twice for the same invoice. They need the duplicate payment refunded today or they will cancel the account.</textarea>
-        <div class="input-footer"><span>Keep the signal concrete.</span><span id="state-count">0 chars</span></div>
+    <main class="shell">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="section-label">Decision lab</p>
+        <h1 id="page-title">Turn a state into a calibrated decision.</h1>
+        <p class="lede">
+          Laya reads one state and answers typed questions in a single forward
+          pass. Shape the questions below, then inspect the distribution—not
+          just the winner.
+        </p>
       </section>
 
-      <section class="questions-panel panel" aria-labelledby="questions-heading">
-        <div class="panel-heading">
+      <section
+        class="results-section"
+        aria-labelledby="results-heading"
+        aria-live="polite"
+      >
+        <div class="results-heading">
           <div>
-            <p class="section-label">02 / Questions</p>
-            <h2 id="questions-heading">Name the decisions.</h2>
+            <p class="section-label">Readout</p>
+            <h2 id="results-heading">The model's readout.</h2>
           </div>
-          <button type="button" class="button button-quiet" id="add-question">+ Add</button>
+          <span class="latency" id="latency"></span>
         </div>
-        <div id="questions-list" class="question-list"></div>
-        <button type="submit" class="button button-primary" id="predict-button"><span>Run decisions</span><span aria-hidden="true">→</span></button>
-        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <div class="readout-tabs" role="tablist" aria-label="Readout format">
+          <button type="button" class="readout-tab is-active" id="visual-tab" role="tab" aria-selected="true" aria-controls="results">Visual</button>
+          <button type="button" class="readout-tab" id="json-tab" role="tab" aria-selected="false" aria-controls="json-results">JSON</button>
+        </div>
+        <div id="results" class="results-empty" role="tabpanel" aria-labelledby="visual-tab" tabindex="0">
+          <div class="empty-line"></div>
+          <p>
+            Run a decision to see choice probabilities, score levels, and noul
+            confidence.
+          </p>
+        </div>
+        <pre id="json-results" class="json-results" role="tabpanel" aria-labelledby="json-tab" tabindex="0" hidden></pre>
       </section>
-    </form>
 
-    <section class="results-section" aria-labelledby="results-heading" aria-live="polite">
-      <div class="results-heading">
-        <div>
-          <p class="section-label">03 / Readout</p>
-          <h2 id="results-heading">The model's readout.</h2>
-        </div>
-        <span class="latency" id="latency"></span>
-      </div>
-      <div id="results" class="results-empty">
-        <div class="empty-line"></div>
-        <p>Run a decision to see choice probabilities, score levels, and noul confidence.</p>
-      </div>
-    </section>
-  </main>
-  <footer class="footer"><span>Powered by <a href="https://huggingface.co/convaiinnovations/laya" target="_blank" rel="noreferrer">convaiinnovations/laya</a></span><span>Probabilities are signals, not verdicts.</span></footer>
-</body>
+      <form id="predict-form" class="workspace">
+        <section class="input-panel panel" aria-labelledby="state-heading">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">State</p>
+              <h2 id="state-heading">What should Laya read?</h2>
+            </div>
+            <span class="field-note">Text or JSON</span>
+          </div>
+          <label class="sr-only" for="state-input">State</label>
+          <textarea id="state-input" name="state" rows="11" spellcheck="true">
+A customer was charged twice for the same invoice. They need the duplicate payment refunded today or they will cancel the account.</textarea
+          >
+          <div class="input-footer">
+            <span>Keep the signal concrete.</span
+            ><span id="state-count">0 chars</span>
+          </div>
+        </section>
+
+        <section
+          class="questions-panel panel"
+          aria-labelledby="questions-heading"
+        >
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">Questions</p>
+              <h2 id="questions-heading">Name the decisions.</h2>
+            </div>
+            <button type="button" class="button button-quiet" id="add-question">
+              + Add
+            </button>
+          </div>
+          <div id="questions-list" class="question-list"></div>
+          <button
+            type="submit"
+            class="button button-primary"
+            id="predict-button"
+          >
+            <span>Run decisions</span><span aria-hidden="true">→</span>
+          </button>
+          <p class="form-error" id="form-error" role="alert" hidden></p>
+        </section>
+      </form>
+    </main>
+    <footer class="footer">
+      <span
+        >Powered by
+        <a
+          href="https://huggingface.co/convaiinnovations/laya"
+          target="_blank"
+          rel="noreferrer"
+          >convaiinnovations/laya</a
+        ></span
+      ><span>Probabilities are signals, not verdicts.</span>
+    </footer>
+  </body>
 </html>

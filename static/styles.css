@@ -82,6 +82,11 @@ textarea:focus, input:focus, select:focus { border-color: var(--mint-deep); back
 .empty-line { height: 1px; background: var(--coral); }
 .results-empty p { margin: 0; max-width: 56ch; }
 .results-list { border-bottom: 1px solid var(--line); }
+.readout-tabs { display: flex; gap: 5px; margin-top: 16px; border-bottom: 1px solid var(--line); }
+.readout-tab { position: relative; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 9px 4px 10px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 750; }
+.readout-tab:hover { color: var(--ink); }
+.readout-tab.is-active { border-bottom-color: var(--coral); color: var(--ink); }
+.json-results { min-height: 180px; max-height: 720px; overflow: auto; margin: 0; padding: 24px; border-bottom: 1px solid var(--line); background: #1d2926; color: #dceee4; font: 12px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; tab-size: 2; white-space: pre; }
 .result-row { display: grid; grid-template-columns: 1fr 2.1fr; gap: 30px; padding: 27px 0; border-bottom: 1px solid var(--line); }
 .result-label { display: flex; flex-wrap: wrap; align-content: flex-start; align-items: center; gap: 10px; }
 .result-label .question-index { width: 100%; }

@@ -6,6 +6,9 @@ const predictButton = document.querySelector("#predict-button");
 const formError = document.querySelector("#form-error");
 const results = document.querySelector("#results");
 const latency = document.querySelector("#latency");
+const jsonResults = document.querySelector("#json-results");
+const visualTab = document.querySelector("#visual-tab");
+const jsonTab = document.querySelector("#json-tab");
 let questionNumber = 0;
 
 const initialQuestions = [
@@ -76,6 +79,15 @@ function currentQuestions() {
 function updateCount() { stateCount.textContent = `${stateInput.value.length.toLocaleString()} chars`; }
 function showError(message) { formError.textContent = message; formError.hidden = false; }
 function clearError() { formError.hidden = true; formError.textContent = ""; }
+function setReadoutTab(format) {
+  const showJson = format === "json";
+  results.hidden = showJson;
+  jsonResults.hidden = !showJson;
+  visualTab.classList.toggle("is-active", !showJson);
+  jsonTab.classList.toggle("is-active", showJson);
+  visualTab.setAttribute("aria-selected", String(!showJson));
+  jsonTab.setAttribute("aria-selected", String(showJson));
+}
 function setButtonLoading(loading) { predictButton.disabled = loading; predictButton.querySelector("span").textContent = loading ? "Reading…" : "Run decisions"; }
 
 function renderChoice(answer) {
@@ -97,7 +109,11 @@ function renderResults(payload) {
   const cards = Object.entries(payload.answers).map(([id, answer], index) => `<article class="result-row"><div class="result-label"><span class="question-index">${String(index + 1).padStart(2, "0")}</span><h3>${escapeHtml(id.replaceAll("_", " "))}</h3><span class="type-chip">${answer.type}</span></div><div class="answer-content">${answer.type === "choice" ? renderChoice(answer) : answer.type === "score" ? renderScore(answer) : renderNoul(answer)}</div></article>`).join("");
   results.className = "results-list";
   results.innerHTML = cards;
+  jsonResults.textContent = JSON.stringify(payload, null, 2);
 }
+visualTab.addEventListener("click", () => setReadoutTab("visual"));
+jsonTab.addEventListener("click", () => setReadoutTab("json"));
+
 
 async function checkService(path, dotId, labelId) {
   try {
