@@ -11,6 +11,8 @@ from typing import Any
 HOST = os.getenv("LAYA_HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", os.getenv("LAYA_PORT", "8000")))
 MODEL_ID = os.getenv("LAYA_MODEL", "convaiinnovations/laya")
+DEVICE = os.getenv("LAYA_DEVICE", "cpu")
+REQUIRE_LOCAL_MODEL = os.getenv("LAYA_REQUIRE_LOCAL_MODEL", "false").lower() in {"1", "true", "yes", "on"}
 WARMUP = os.getenv("LAYA_WARMUP", "true").lower() in {"1", "true", "yes", "on"}
 DEMO = os.getenv("LAYA_DEMO", "false").lower() in {"1", "true", "yes", "on"}
 MAX_BODY_BYTES = int(os.getenv("LAYA_MAX_BODY_BYTES", "1048576"))
@@ -41,7 +43,7 @@ def _load_model() -> Any:
             try:
                 import laya
 
-                _model = laya.load(MODEL_ID)
+                _model = laya.load(MODEL_ID, device=DEVICE)
                 _load_error = None
             except Exception as exc:  # keep health available when model startup fails
                 _load_error = f"{type(exc).__name__}: {exc}"
@@ -189,6 +191,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
+    if REQUIRE_LOCAL_MODEL and (not os.path.isabs(MODEL_ID) or not os.path.isdir(MODEL_ID)):
+        raise SystemExit(f"LAYA_MODEL must be an existing absolute directory, got {MODEL_ID!r}")
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     print(f"Laya API listening on http://localhost:{PORT}", flush=True)
     if WARMUP:
